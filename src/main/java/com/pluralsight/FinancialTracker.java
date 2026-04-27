@@ -1,9 +1,6 @@
 package com.pluralsight;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -100,6 +97,8 @@ public class FinancialTracker {
                 Transaction transaction = new Transaction(date, time, description, vendor, amount);
 
                 transactions.add(transaction); // adds new transaction object into the transactions array list
+
+                saveTransaction(transaction); // saves changes to the file
             }
         } catch (IOException e) {
             System.err.println("error");
@@ -149,12 +148,30 @@ public class FinancialTracker {
 
             transactions.add(transaction); // adds new transaction object into the transactions array list
 
+            saveTransaction(transaction); // saves changes to the file
+
             System.out.println("Deposit added successfully.");
         } catch (NumberFormatException e) {
             System.out.println("Invalid input. Deposit not added.");
         }
     }
 
+    private static void saveTransaction(Transaction transaction) {
+        try {
+            // creates buffered writer and appends all changes to file
+            BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME, true));
+
+            // writes new object into file
+            bw.write(transaction.getDate() + "|" + transaction.getTime() + "|" + transaction.getDescription() +
+                    "|" + transaction.getVendor() + "|" + transaction.getAmount());
+
+            bw.newLine();
+            bw.close();
+
+        } catch (IOException e) {
+            System.out.println("Error saving transaction");
+        }
+    }
 
     /**
      * Same prompts as addDeposit.
