@@ -5,9 +5,9 @@ public class Transaction {
     private String time;
     private String description;
     private String vendor;
-    private int amount;
+    private double amount;
 
-    public Transaction(String date, String time, String description, String vendor, int amount) {
+    public Transaction(String date, String time, String description, String vendor, double amount) {
         this.date = date;
         this.time = time;
         this.description = description;
@@ -47,11 +47,22 @@ public class Transaction {
         this.vendor = vendor;
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "date='" + date + '\'' +
+                ", time='" + time + '\'' +
+                ", description='" + description + '\'' +
+                ", vendor='" + vendor + '\'' +
+                ", amount=" + amount +
+                '}';
     }
 }
