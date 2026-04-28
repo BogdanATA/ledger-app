@@ -319,7 +319,7 @@ public class FinancialTracker {
                 case "2" -> {previousMonth(); }
                 case "3" -> {yearToDate(); }
                 case "4" -> {previousYear(); }
-                case "5" -> {/* TODO – prompt for vendor then report */ }
+                case "5" -> {searchByVendor(scanner); }
                 case "6" -> customSearch(scanner);
                 case "0" -> running = false;
                 default -> System.out.println("Invalid option");
@@ -371,7 +371,15 @@ public class FinancialTracker {
         }
     }
 
+    private static void searchByVendor(Scanner scanner) {
+        System.out.print("Search vendor name: ");
+        String vendorName = scanner.nextLine();
 
+        for (Transaction transaction : transactions) {
+            if (!vendorName.trim().equalsIgnoreCase(transaction.getVendor())) continue;
+            printTransaction(transaction);
+        }
+    }
     /* ------------------------------------------------------------------
        Reporting helpers
        ------------------------------------------------------------------ */
