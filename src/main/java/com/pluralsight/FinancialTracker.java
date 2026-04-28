@@ -2,6 +2,7 @@ package com.pluralsight;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -81,14 +82,14 @@ public class FinancialTracker {
             if (!file.exists()){
                 file.createNewFile();
             }
-            BufferedReader br = new BufferedReader(new FileReader(file));
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
             String line;
 
             while ((line = br.readLine()) != null) {    // while line isnt null keep reading
                 String[] tokens = line.split("\\|"); // split line each time it reads '|'
 
-                String date = tokens[0];
-                String time = tokens[1];
+                LocalDate date = LocalDate.parse(tokens[0], DATE_FMT);
+                LocalTime time = LocalTime.parse(tokens[1], TIME_FMT);
                 String description = tokens[2];
                 String vendor = tokens[3];
                 double amount = Double.parseDouble(tokens[4]);
@@ -98,7 +99,7 @@ public class FinancialTracker {
 
                 transactions.add(transaction); // adds new transaction object into the transactions array list
 
-                saveTransaction(transaction); // saves changes to the file
+
             }
         } catch (IOException e) {
             System.err.println("error");
@@ -119,16 +120,16 @@ public class FinancialTracker {
         // TODO
         // date + time user input and parse
         try {
-            System.out.print("Enter date and time (yyyy-MM-dd HH:mm:ss");
+            System.out.print("Enter date and time (yyyy-MM-dd HH:mm:ss: ");
             String dateTimeInput = scanner.nextLine().trim();
 
-            String[] tokens = dateTimeInput.split(" ");
-            String date = tokens[0];
-            String time = tokens[1];
+            LocalDateTime dateTime = LocalDateTime.parse(dateTimeInput, DATETIME_FMT);
+            LocalDate date = dateTime.toLocalDate();
+            LocalTime time = dateTime.toLocalTime();
 
             // description
             System.out.print("Enter description: ");
-            String description = scanner.nextLine().trim().trim();
+            String description = scanner.nextLine().trim();
 
             // vendor
             System.out.print("Enter vendor: ");
@@ -138,7 +139,7 @@ public class FinancialTracker {
             System.out.print("Enter amount: ");
             double amount = Double.parseDouble(scanner.nextLine().trim());
 
-            // make sure amount positive
+            // make sure amount is positive
             if (amount <= 0) {
                 System.out.println("Deposit amount must be positive.");
                 return;
@@ -155,15 +156,18 @@ public class FinancialTracker {
             System.out.println("Invalid input. Deposit not added.");
         }
     }
-
+    // writes any new objects into file and saves it
     private static void saveTransaction(Transaction transaction) {
         try {
             // creates buffered writer and appends all changes to file
             BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME, true));
 
             // writes new object into file
-            bw.write(transaction.getDate() + "|" + transaction.getTime() + "|" + transaction.getDescription() +
-                    "|" + transaction.getVendor() + "|" + transaction.getAmount());
+            bw.write(transaction.getDate().format(DATE_FMT) +
+                    "|" + transaction.getTime().format(TIME_FMT) +
+                    "|" + transaction.getDescription() +
+                    "|" + transaction.getVendor() +
+                    "|" + transaction.getAmount());
 
             bw.newLine();
             bw.close();
@@ -180,6 +184,44 @@ public class FinancialTracker {
      */
     private static void addPayment(Scanner scanner) {
         // TODO
+        try {
+            System.out.print("Enter date and time (yyyy-MM-dd HH:mm:ss: ");
+            String dateTimeInput = scanner.nextLine().trim();
+
+            LocalDateTime dateTime = LocalDateTime.parse(dateTimeInput, DATETIME_FMT);
+            LocalDate date = dateTime.toLocalDate();
+            LocalTime time = dateTime.toLocalTime();
+
+            // description
+            System.out.print("Enter description: ");
+            String description = scanner.nextLine().trim();
+
+            // vendor
+            System.out.print("Enter vendor: ");
+            String vendor = scanner.nextLine().trim();
+
+            // amount
+            System.out.print("Enter amount: ");
+            double amount = Double.parseDouble(scanner.nextLine().trim());
+
+            // make sure amount is positive
+            if (amount <= 0) {
+                System.out.println("Payment amount must be positive.");
+                return;
+            }
+            //negate the payment entered
+            double negatedAmount = amount * -1;
+            // creates transaction object using parsed data from file
+            Transaction transaction = new Transaction(date, time, description, vendor, negatedAmount);
+
+            transactions.add(transaction); // adds new transaction object into the transactions array list
+
+            saveTransaction(transaction); // saves changes to the file
+
+            System.out.println("Payment added successfully.");
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Payment not added.");
+        }
     }
 
     /* ------------------------------------------------------------------
