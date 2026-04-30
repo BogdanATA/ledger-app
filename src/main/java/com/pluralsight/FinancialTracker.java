@@ -66,11 +66,12 @@ public class FinancialTracker {
     /* ------------------------------------------------------------------
        File I/O
        ------------------------------------------------------------------ */
-
     /**
      * Load transactions from FILE_NAME.
-     * • If the file doesn’t exist, create an empty one so that future writes succeed.
-     * • Each line looks like: date|time|description|vendor|amount
+     * If the file doesn’t exist, create an empty one so that future writes succeed.
+     * Each line looks like: date|time|description|vendor|amount
+     *
+     * @param fileName FILE_NAME is passed down into this parameter
      */
     public static void loadTransactions(String fileName) {
         try {
@@ -86,7 +87,7 @@ public class FinancialTracker {
             while ((line = br.readLine()) != null) {    // while line isnt null keep reading
                 String[] tokens = line.split("\\|"); // split line each time it reads '|'
 
-                if (tokens.length != 5) continue; // if line inside file has less or more than 5 tokens skip it
+                if (tokens.length != 5) continue; // if line inside file doesnt have exactly 5 tokens skip it
 
                 LocalDate date = LocalDate.parse(tokens[0], DATE_FMT);
                 LocalTime time = LocalTime.parse(tokens[1], TIME_FMT);
@@ -98,8 +99,6 @@ public class FinancialTracker {
                 Transaction transaction = new Transaction(date, time, description, vendor, amount);
 
                 transactions.add(transaction); // adds new transaction object into the transactions array list
-
-
             }
         } catch (IOException e) {
             System.err.println("error");
@@ -109,15 +108,15 @@ public class FinancialTracker {
     /* ------------------------------------------------------------------
        Add new transactions
        ------------------------------------------------------------------ */
-
     /**
      * Prompt for ONE date+time string in the format
      * "yyyy-MM-dd HH:mm:ss", plus description, vendor, amount.
      * Validate that the amount entered is positive.
      * Store the amount as-is (positive) and append to the file.
+     *
+     * @param scanner used to read user input
      */
     private static void addDeposit(Scanner scanner) {
-        // TODO
         // date + time user input and parse
         try {
             System.out.print("Enter date and time (yyyy-MM-dd HH:mm:ss): ");
@@ -156,31 +155,13 @@ public class FinancialTracker {
             System.out.println("Invalid input. Deposit not added.");
         }
     }
-    // writes any new objects into file and saves it
-    private static void saveTransaction(Transaction transaction) {
-        try {
-            // creates buffered writer and appends all changes to file
-            BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME, true));
-
-            // writes new object into file
-            bw.write(transaction.getDate().format(DATE_FMT) +
-                    "|" + transaction.getTime().format(TIME_FMT) +
-                    "|" + transaction.getDescription() +
-                    "|" + transaction.getVendor() +
-                    "|" + transaction.getAmount());
-
-            bw.newLine();
-            bw.close();
-
-        } catch (IOException e) {
-            System.out.println("Error saving transaction");
-        }
-    }
 
     /**
-     * Same prompts as addDeposit.
-     * Amount must be entered as a positive number,
-     * then converted to a negative amount before storing.
+     * Prompts user for payment details
+     * Amount entered is positive then converts it to negative
+     * Creates a transaction and saves it
+     *
+     * @param scanner used to read user input
      */
     private static void addPayment(Scanner scanner) {
         // TODO
@@ -224,9 +205,40 @@ public class FinancialTracker {
         }
     }
 
+    /**
+     * Appends transaction to transaction file.
+     *
+     * @param transaction takes transaction object and writes it to file
+     * */
+    private static void saveTransaction(Transaction transaction) {
+        try {
+            // creates buffered writer and appends all changes to file
+            BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME, true));
+
+            // writes new object into file
+            bw.write(transaction.getDate().format(DATE_FMT) +
+                    "|" + transaction.getTime().format(TIME_FMT) +
+                    "|" + transaction.getDescription() +
+                    "|" + transaction.getVendor() +
+                    "|" + transaction.getAmount());
+
+            bw.newLine();
+            bw.close();
+
+        } catch (IOException e) {
+            System.out.println("Error saving transaction");
+        }
+    }
+
     /* ------------------------------------------------------------------
        Ledger menu
        ------------------------------------------------------------------ */
+    /**
+     * Displays the ledger menu
+     * Handles user navigation
+     *
+     * @param scanner Used to read user navigation commands
+     * */
     private static void ledgerMenu(Scanner scanner) {
 
         transactions.sort(Comparator.comparing(Transaction::getDate));
@@ -257,13 +269,19 @@ public class FinancialTracker {
     /* ------------------------------------------------------------------
        Display helpers: show data in neat columns
        ------------------------------------------------------------------ */
-    private static void displayLedger() { /* TODO – print all transactions in column format */
+    /**
+     * Display all transactions from the array list
+     * */
+    private static void displayLedger() {
         printLedgerHeader();
         for (Transaction transaction : transactions) {
             printTransaction(transaction);
         }
     }
 
+    /**
+     * Display only the transactions with positive amounts
+     * */
     private static void displayDeposits() { /* TODO – only amount > 0               */
         printLedgerHeader();
         for (Transaction deposit : transactions) {
@@ -273,6 +291,9 @@ public class FinancialTracker {
         }
     }
 
+    /**
+     * Display only the transactions with negative amounts
+     * */
     private static void displayPayments() { /* TODO – only amount < 0               */
         printLedgerHeader();
         for (Transaction payment : transactions) {
@@ -282,11 +303,19 @@ public class FinancialTracker {
         }
     }
 
+    /**
+     * Prints formatted header for the ledger categories
+     * */
     private static void printLedgerHeader () {
         System.out.printf("%-12s %-10s %-20s %-20s %s%n", "Date", "Time", "Description", "Vendor", "Amount");
         System.out.println("-".repeat(75)); // creates line of dashes
     }
 
+    /**
+     * Prints 1 transaction in formatted column
+     *
+     * @param transaction takes the transaction that needs to be printed
+     * */
     private static void printTransaction(Transaction transaction) {
             System.out.printf("%-12s %-10s %-20s %-20s %.2f%n", // assigns and holds x amount of spaces starting from the left
                     transaction.getDate().format(DATE_FMT),
@@ -298,10 +327,15 @@ public class FinancialTracker {
                     transaction.getAmount());
         }
 
-
     /* ------------------------------------------------------------------
        Reports menu
        ------------------------------------------------------------------ */
+    /**
+     * Displays the reports menu
+     * Handles user navigation
+     *
+     * @param scanner Used to read user navigation commands
+     * */
     private static void reportsMenu(Scanner scanner) {
         boolean running = true;
         while (running) {
@@ -329,6 +363,10 @@ public class FinancialTracker {
             }
         }
     }
+
+    /**
+     * Displays transactions from start of current month up to the current date
+     * */
     private static void monthToDate() {
         // get start and end date info
         LocalDate today = LocalDate.now();
@@ -340,6 +378,10 @@ public class FinancialTracker {
 
         filterTransactionsByDate(startOfMonth, today); // method takes the start and end date and handles the filtering logic
     }
+
+    /**
+     * Displays transactions from the previous month
+     * */
     private static void previousMonth() {
         // get start and end date info
         LocalDate today = LocalDate.now();
@@ -352,6 +394,10 @@ public class FinancialTracker {
 
         filterTransactionsByDate(firstOfLastMonth, lastOfLastMonth); // method takes the start and end date and handles the filtering logic
     }
+
+    /**
+     * Displays transactions from the start of current year up to the current date
+     * */
     private static void yearToDate() {
         // get start and end date info
         LocalDate today = LocalDate.now();
@@ -363,6 +409,10 @@ public class FinancialTracker {
 
         filterTransactionsByDate(startOfYear, today); // method takes the start and end date and handles the filtering logic
     }
+
+    /**
+     * Displays transactions from the previous year
+     * */
     private static void previousYear() {
         // get start and end date info
         LocalDate today = LocalDate.now();
@@ -375,6 +425,13 @@ public class FinancialTracker {
 
         filterTransactionsByDate(firstOfLastYear, lastOfLastYear); // method takes the start and end date and handles the filtering logic
     }
+
+    /**
+     * Prompts user for vendor name
+     * Displays matching transactions
+     *
+     * @param scanner Used to read name of vendor the user wants to search for
+     * */
     private static void searchByVendor(Scanner scanner) {
         System.out.print("Search vendor name: ");
         String vendorName = scanner.nextLine().trim(); // saves user input as a string
@@ -388,6 +445,13 @@ public class FinancialTracker {
     /* ------------------------------------------------------------------
        Reporting helpers
        ------------------------------------------------------------------ */
+    /**
+     * Prints transactions between the given dates
+     * Tells user if no transactions were found between the given dates
+     *
+     * @param start the start date
+     * @param end the end date
+     * */
     private static void filterTransactionsByDate(LocalDate start, LocalDate end) {
         boolean found = false;
         for (Transaction transaction : transactions) {
@@ -399,6 +463,11 @@ public class FinancialTracker {
         if (!found) System.out.println("No transactions found for that period.");
     }
 
+    /**
+     * Prints transactions that match user given vendor
+     *
+     * @param vendorName User given vendor name that gets compared to list of vendors
+     * */
     private static void filterTransactionsByVendor(String vendorName) {
         boolean found = false;
         for (Transaction transaction : transactions) {
@@ -409,6 +478,10 @@ public class FinancialTracker {
         if (!found) System.out.println("No transactions found for " + vendorName); // if false will not print
     }
 
+    /**
+     * Allows user to filter transactions by date, description, vendor and amount
+     * Tells user if no transactions matching the criteria were found
+     * */
     private static void customSearch(Scanner scanner) {
         System.out.println("Custom Search. Press 'ENTER' to leave blank");
 
@@ -442,6 +515,13 @@ public class FinancialTracker {
     /* ------------------------------------------------------------------
        Utility parsers (you can reuse in many places)
        ------------------------------------------------------------------ */
+    /**
+     * Prompts for a date
+     *
+     * @param prompt The message displayed to the user (asking for date input)
+     * @param scanner Used to read the user given date
+     * @return parsed LocalDate or null if user leaves input blank
+     * */
    private static LocalDate parseDate(String prompt, Scanner scanner) {
 
         while (true) {
@@ -458,6 +538,13 @@ public class FinancialTracker {
         }
     }
 
+    /**
+     * promts for an amount
+     *
+     * @param prompt The message displayed to the user (asking for amount input)
+     * @param scanner Used to read the user given amount
+     * @return parsed Double or null if user leaves input blank
+     * */
     private static Double parseDouble(String prompt, Scanner scanner) {
 
        while (true) {
