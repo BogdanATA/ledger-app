@@ -520,7 +520,7 @@ public class FinancialTracker {
     }
 
     /**
-     * promts for an amount
+     * prompts for an amount
      *
      * @param prompt The message displayed to the user (asking for amount input)
      * @param scanner Used to read the user given amount
