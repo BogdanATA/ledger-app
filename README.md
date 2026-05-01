@@ -65,6 +65,7 @@ Follow these steps to get your application running within IntelliJ IDEA:
 - Add option to input current time and date to avoid manually typing it in
 - Add option for user to only input year when filtering
 - Do not let user input more than 35 characters into description
+- Make it so the when user enters a description it auto capitalizes the first letter
 
 ## Resources
 

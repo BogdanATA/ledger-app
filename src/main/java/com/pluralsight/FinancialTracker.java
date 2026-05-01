@@ -80,19 +80,23 @@ public class FinancialTracker {
 
                 if (tokens.length != 5) continue; // if line inside file doesnt have exactly 5 tokens skip it
 
-                LocalDate date = LocalDate.parse(tokens[0], DATE_FMT);
-                LocalTime time = LocalTime.parse(tokens[1], TIME_FMT);
-                String description = tokens[2];
-                String vendor = tokens[3];
-                double amount = Double.parseDouble(tokens[4]);
+                try {
+                    LocalDate date = LocalDate.parse(tokens[0], DATE_FMT);
+                    LocalTime time = LocalTime.parse(tokens[1], TIME_FMT);
+                    String description = tokens[2];
+                    String vendor = tokens[3];
+                    double amount = Double.parseDouble(tokens[4]);
 
-                // creates transaction object using parsed data from file
-                Transaction transaction = new Transaction(date, time, description, vendor, amount);
+                    // creates transaction object using parsed data from file
+                    Transaction transaction = new Transaction(date, time, description, vendor, amount);
 
-                transactions.add(transaction); // adds new transaction object into the transactions array list
+                    transactions.add(transaction); // adds new transaction object into the transactions array list
+                } catch (Exception e) {
+                    System.err.println("Bad line:" + line);
+                }
             }
         } catch (IOException e) {
-            System.err.println("error");
+            System.err.println("Error reading file" + fileName);
         }
     }
 
@@ -150,7 +154,6 @@ public class FinancialTracker {
      * @param scanner used to read user input
      */
     private static void addPayment(Scanner scanner) {
-        // TODO
         try {
             System.out.print("Enter date and time (yyyy-MM-dd HH:mm:ss): ");
             String dateTimeInput = scanner.nextLine().trim();
