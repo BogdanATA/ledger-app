@@ -9,14 +9,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Scanner;
 
-/*
- * Capstone skeleton – personal finance tracker.
- * ------------------------------------------------
- * File format  (pipe-delimited)
- *     yyyy-MM-dd|HH:mm:ss|description|vendor|amount
- * A deposit has a positive amount; a payment is stored
- * as a negative amount.
- */
+
 public class FinancialTracker {
 
     /* ------------------------------------------------------------------
@@ -43,7 +36,7 @@ public class FinancialTracker {
         boolean running = true;
 
         while (running) {
-            System.out.println("Welcome to TransactionApp");
+            System.out.println("\nWelcome to TransactionApp");
             System.out.println("Choose an option:");
             System.out.println("D) Add Deposit");
             System.out.println("P) Make Payment (Debit)");
@@ -232,12 +225,13 @@ public class FinancialTracker {
      * @param scanner Used to read user navigation commands
      * */
     private static void ledgerMenu(Scanner scanner) {
-
-        transactions.sort(Comparator.comparing(Transaction::getDate));
+        // sort transactions so they print newest at top
+        transactions.sort(Comparator.comparing(Transaction::getDate)
+                .thenComparing(Transaction::getTime).reversed());
 
         boolean running = true;
         while (running) {
-            System.out.println("Ledger");
+            System.out.println("\nLedger");
             System.out.println("Choose an option:");
             System.out.println("A) All");
             System.out.println("D) Deposits");
@@ -299,8 +293,8 @@ public class FinancialTracker {
      * Prints formatted header for the ledger categories.
      * */
     private static void printLedgerHeader () {
-        System.out.printf("%-12s %-10s %-20s %-20s %s%n", "Date", "Time", "Description", "Vendor", "Amount");
-        System.out.println("-".repeat(75)); // creates line of dashes
+        System.out.printf("%-12s %-10s %-35s %-20s %s%n", "Date", "Time", "Description", "Vendor", "Amount in $");
+        System.out.println("-".repeat(95)); // creates line of dashes
     }
 
     /**
@@ -309,12 +303,10 @@ public class FinancialTracker {
      * @param transaction takes the transaction that needs to be printed
      * */
     private static void printTransaction(Transaction transaction) {
-        System.out.printf("%-12s %-10s %-20s %-20s %.2f%n", // assigns and holds x amount of spaces starting from the left
+        System.out.printf("%-12s %-10s %-35s %-20s %.2f%n", // assigns and holds x amount of spaces starting from the left
                 transaction.getDate().format(DATE_FMT),
                 transaction.getTime().format(TIME_FMT),
-                transaction.getDescription().length() > 20 // CONDDITION if description is longer than 20 characters
-                        ? transaction.getDescription().substring(0, 17) + "..." // IF TRUE takes characters from 0 to 16 and adds ... at the end so total characters is still 20
-                        : transaction.getDescription(), // if less than 20 characters long just prints it normally
+                transaction.getDescription(),
                 transaction.getVendor(),
                 transaction.getAmount());
         }
@@ -329,7 +321,7 @@ public class FinancialTracker {
     private static void reportsMenu(Scanner scanner) {
         boolean running = true;
         while (running) {
-            System.out.println("Reports");
+            System.out.println("\nReports");
             System.out.println("Choose an option:");
             System.out.println("1) Month To Date");
             System.out.println("2) Previous Month");
@@ -363,7 +355,7 @@ public class FinancialTracker {
         LocalDate startOfMonth = today.withDayOfMonth(1); // takes today and creates new date with same year and month but the day is set to 1
 
         // print header
-        System.out.println("MONTH TO DATE");
+        System.out.println("\nMONTH TO DATE");
         printLedgerHeader();
 
         filterTransactionsByDate(startOfMonth, today); // method takes the start and end date and handles the filtering logic
@@ -379,7 +371,7 @@ public class FinancialTracker {
         LocalDate lastOfLastMonth = firstOfLastMonth.withDayOfMonth(firstOfLastMonth.lengthOfMonth()); // withDateOfMonth takes the last day of the month
 
         // print header
-        System.out.println("PREVIOUS MONTH");
+        System.out.println("\nPREVIOUS MONTH");
         printLedgerHeader();
 
         filterTransactionsByDate(firstOfLastMonth, lastOfLastMonth); // method takes the start and end date and handles the filtering logic
@@ -394,7 +386,7 @@ public class FinancialTracker {
         LocalDate startOfYear = today.withDayOfYear(1);
 
         // print header
-        System.out.println("YEAR TO DATE");
+        System.out.println("\nYEAR TO DATE");
         printLedgerHeader();
 
         filterTransactionsByDate(startOfYear, today); // method takes the start and end date and handles the filtering logic
@@ -410,7 +402,7 @@ public class FinancialTracker {
         LocalDate lastOfLastYear = firstOfLastYear.withDayOfYear(firstOfLastYear.lengthOfYear());
 
         // print header
-        System.out.println("PREVIOUS YEAR");
+        System.out.println("\nPREVIOUS YEAR");
         printLedgerHeader();
 
         filterTransactionsByDate(firstOfLastYear, lastOfLastYear); // method takes the start and end date and handles the filtering logic

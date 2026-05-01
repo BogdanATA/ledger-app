@@ -48,7 +48,7 @@ Follow these steps to get your application running within IntelliJ IDEA:
 2. Select "Open" and navigate to the directory where you cloned or downloaded the project.
 3. After the project opens, wait for IntelliJ to index the files and set up the project.
 4. Find the main class with the `public static void main(String[] args)` method.
-5. Right-click on the file and select 'Run 'YourMainClassName.main()'' to start the application.
+5. Right-click on the file and select 'Run 'FinancialTracker.main()'' to start the application.
 
 ## Technologies Used
 
@@ -56,13 +56,15 @@ Follow these steps to get your application running within IntelliJ IDEA:
 
 ## Demo
 
-Include screenshots or GIFs that show your application in action. Use tools like [Giphy Capture](https://giphy.com/apps/giphycapture) to record a GIF of your application.
-
-![Application Screenshot](path/to/your/screenshot.png)
+![Application Screenshot](ledger-app-showcase.gif)
 
 ## Future Work
 
 - Make it so when user enters a description it could be partial but still find a match
+- Add a way for user to update an existing transaction if they entered it wrong 
+- Add option to input current time and date to avoid manually typing it in
+- Add option for user to only input year when filtering
+- Do not let user input more than 35 characters into description
 
 ## Resources
 
