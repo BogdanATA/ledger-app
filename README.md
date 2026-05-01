@@ -2,15 +2,12 @@
 
 ## Description of the Project
 
-Briefly describe what this Java console application does. Mention its purpose and who the intended users are. Explain the main functionality and what problems it aims to solve.
 This application is a personal finance tracker that allows users to record and track their financial transactions. This application is intended for users who want 
 to keep track of their finances and be able to find specific transactions that they are looking for. Users can add deposits and payments which get added into a file
 that saves all the data. The application provides a way for users filter their transactions by date, description, vendor and amount. The application helps user get 
 better visibility of their spending and income.
 
 ## User Stories
-
-List the user stories that guided the development of your application. Format these stories as: "As a [type of user], I want [some goal] so that [some reason]."
 
 - As a user, I want to be able to input my data, so that the application can process it accordingly.
 - As a user, I want to receive immediate feedback, so I can understand what to do next.
@@ -65,7 +62,7 @@ Follow these steps to get your application running within IntelliJ IDEA:
 - Add option to input current time and date to avoid manually typing it in
 - Add option for user to only input year when filtering
 - Do not let user input more than 35 characters into description
-- Make it so the when user enters a description it auto capitalizes the first letter
+- Make it so that when user enters a description it auto capitalizes the first letter
 
 ## Resources
 
